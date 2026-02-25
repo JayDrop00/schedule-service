@@ -1,6 +1,9 @@
 import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { SchedulerService } from './app.service';
+import { ScheduleTransactionDto } from './dto/schedule.dto';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
 
 @Controller()
 export class SchedulerController {
@@ -9,18 +12,9 @@ export class SchedulerController {
   constructor(private readonly schedulerService: SchedulerService) {}
 
   @MessagePattern('schedule_transaction')
-  async scheduleTransaction(
-    @Payload() data: {
-      userId: number;
-      amount: number;
-      type: 'DEPOSIT' | 'WITHDRAW';
-      scheduleAt: string;
-    },
-  ) {
-    this.logger.log(
-      `Received schedule_transaction: ${JSON.stringify(data)}`,
-    );
-
-    return this.schedulerService.scheduleTransaction(data);
+    async handleScheduleTransaction(@Payload() data: any) {
+      const dto = plainToInstance(ScheduleTransactionDto, data);
+      await validateOrReject(dto); // will throw if invalid
+      return this.schedulerService.scheduleTransaction(dto);
   }
 }

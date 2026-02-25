@@ -2,9 +2,11 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SchedulerService } from './app.service';
 import { SchedulerController } from './app.controller';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ClientsModule.register([
       {
         name: 'QUEUE_SERVICE',
