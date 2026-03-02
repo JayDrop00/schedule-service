@@ -154,22 +154,30 @@ export class SchedulerService {
   // ======================================================
 
   private convertIntervalToCron(interval: {
+
     unit: Interval;
     value: number;
   }): string {
+
     const { unit, value } = interval;
 
     switch (unit) {
+
       case Interval.SECOND:
         return `*/${value} * * * * *`; // every X seconds
+
       case Interval.MINUTE:
         return `0 */${value} * * * *`; // every X minutes
+
       case Interval.HOUR:
         return `0 0 */${value} * * *`; // every X hours
+
       case Interval.DAY:
         return `0 0 0 */${value} * *`; // every X days
+
       default:
         throw new BadRequestException('Invalid interval unit');
+
     }
   }
 
@@ -181,12 +189,14 @@ export class SchedulerService {
     data: ScheduleTransactionDto,
     transactionId: string,
   ) {
+
     const payload = { ...data, transactionId };
 
     this.logger.log(`Dispatching transaction ${transactionId}`);
 
     await firstValueFrom(
       this.queueClient.send('process_transaction', payload),
+
     );
   }
 }
